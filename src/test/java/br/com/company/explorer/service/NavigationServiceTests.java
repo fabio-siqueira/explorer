@@ -12,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.*;
+
 /**
  * Created by Fábio Siqueira on 12/17/15.
  */
@@ -21,30 +23,33 @@ import java.util.List;
 @SpringApplicationConfiguration(ExplorerApplication.class)
 public class NavigationServiceTests {
 
+    // TODO: intection
+   // @Autowired
+    private NavigationService navigationService = new NavigationService();
+
     @Test
     public void firstCase() {
 
         Integer maxLongitude = 5;
         Integer maxLatitude = 5;
 
-        Integer currentLatitude = 1;
-        Integer currentLongitude = 2;
+        Integer currentLongitude = 1;
+        Integer currentLatitude = 2;
 
         String currentDirection = "N";
 
         List<String> commands = Arrays.asList("L", "M", "L", "M", "L", "M", "L", "M", "M");
 
-        NavigationService service = new NavigationService();
         String result = "";
 
         try {
-            result = service.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
+            result = navigationService.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
 
         } catch (InvalidParametersException e) {
-            assert e == null;
+            assertNull(e);
         }
 
-        assert result == "1 3 N";
+        assertEquals("1 3 N", result);
     }
 
     @Test
@@ -60,70 +65,67 @@ public class NavigationServiceTests {
 
         List<String> commands = Arrays.asList("M", "M", "R", "M", "M", "R", "M", "R", "R", "M");
 
-        NavigationService service = new NavigationService();
         String result = "";
 
         try {
-            result = service.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
+            result = navigationService.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
 
         } catch (InvalidParametersException e) {
-            assert e == null;
+            assertNull(e);
         }
 
-        assert result == "5 1 E";
+        assertEquals("5 1 E", result);
     }
 
 
     @Test
     public void goAhead() {
-        NavigationService service = new NavigationService();
+
         Probe probe = new Probe();
 
         Integer maxLongitude = 5;
         Integer maxLatitude = 5;
 
 
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        assert probe.getLatitude() == 1;
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        assertSame(1, probe.getLatitude());
 
 
         probe.setDirection(CardinalDirection.EAST);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        assert probe.getLongitude() == 1;
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        assertSame(1, probe.getLongitude());
 
 
 
         probe.setDirection(CardinalDirection.SOUTH);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        assert probe.getLatitude() == 0;
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        assertSame(0, probe.getLatitude());
 
 
         probe.setDirection(CardinalDirection.WEST);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        assert probe.getLatitude() == 0;
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        assertSame(0, probe.getLatitude());
 
 
         probe.setDirection(CardinalDirection.NORTH);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
 
-        assert probe.getLatitude() == maxLatitude;
-
-
+        assertSame(maxLatitude, probe.getLatitude());
 
         probe.setDirection(CardinalDirection.EAST);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
-        service.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
+        navigationService.goAhead(probe, maxLatitude, maxLongitude);
 
-        assert probe.getLongitude() == maxLatitude;
+        assertSame(maxLatitude, probe.getLongitude());
 
     }
 
@@ -131,45 +133,43 @@ public class NavigationServiceTests {
 
     @Test
     public void turnLeft() {
-        NavigationService service = new NavigationService();
         Probe probe = new Probe();
 
-        service.turnLeft(probe);
-        assert probe.getDirection() == CardinalDirection.WEST;
+        navigationService.turnLeft(probe);
+        assertSame(CardinalDirection.WEST, probe.getDirection());
 
-        service.turnLeft(probe);
-        assert probe.getDirection() == CardinalDirection.SOUTH;
+        navigationService.turnLeft(probe);
+        assertSame(CardinalDirection.SOUTH, probe.getDirection());
 
-        service.turnLeft(probe);
-        assert probe.getDirection() == CardinalDirection.EAST;
+        navigationService.turnLeft(probe);
+        assertSame(CardinalDirection.EAST, probe.getDirection());
 
-        service.turnLeft(probe);
-        assert probe.getDirection() == CardinalDirection.NORTH;
+        navigationService.turnLeft(probe);
+        assertSame(CardinalDirection.NORTH, probe.getDirection());
 
-        service.turnLeft(probe);
-        assert probe.getDirection() == CardinalDirection.WEST;
+        navigationService.turnLeft(probe);
+        assertSame(CardinalDirection.WEST, probe.getDirection());
 
     }
 
     @Test
     public void turnRight() {
-        NavigationService service = new NavigationService();
         Probe probe = new Probe();
 
-        service.turnRight(probe);
-        assert probe.getDirection() == CardinalDirection.EAST;
+        navigationService.turnRight(probe);
+        assertSame(CardinalDirection.EAST, probe.getDirection());
 
-        service.turnRight(probe);
-        assert probe.getDirection() == CardinalDirection.SOUTH;
+        navigationService.turnRight(probe);
+        assertSame(CardinalDirection.SOUTH, probe.getDirection());
 
-        service.turnRight(probe);
-        assert probe.getDirection() == CardinalDirection.WEST;
+        navigationService.turnRight(probe);
+        assertSame(CardinalDirection.WEST, probe.getDirection());
 
-        service.turnRight(probe);
-        assert probe.getDirection() == CardinalDirection.NORTH;
+        navigationService.turnRight(probe);
+        assertSame(CardinalDirection.NORTH, probe.getDirection());
 
-        service.turnRight(probe);
-        assert probe.getDirection() == CardinalDirection.EAST;
+        navigationService.turnRight(probe);
+        assertSame(CardinalDirection.EAST, probe.getDirection());
 
     }
 }
