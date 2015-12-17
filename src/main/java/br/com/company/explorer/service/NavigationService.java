@@ -26,12 +26,12 @@ public class NavigationService {
 
         Probe probe = new Probe(currentLatitude, currentLongitude, direction);
 
-        System.out.println("");
-        System.out.println(probe);
+        //System.out.println("");
+        //System.out.println(probe);
 
         for(String command : commands) {
 
-            System.out.println(command);
+           // System.out.println(command);
 
             if (!ACCEPTED_COMMANDS.contains(command)) {
                 throw new InvalidParametersException("Parameter '" + commands + "' is not allowed.");
@@ -50,7 +50,7 @@ public class NavigationService {
                     goAhead(probe, maxLat, maxLng);
 
             }
-            System.out.println(probe);
+           // System.out.println(probe);
         }
 
         return probe.toString();
