@@ -27,4 +27,13 @@ public enum CardinalDirection {
         return this.id;
     }
 
+    public static CardinalDirection getById(String id) {
+        for(CardinalDirection e : values()) {
+            if(e.getId().equals(id)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
 }
