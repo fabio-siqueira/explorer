@@ -5,10 +5,10 @@ package br.com.company.explorer.domain;
  */
 public class Probe {
 
-    Integer latitude = 0; // x line
-    Integer longitude = 0; // y line
+    private Integer latitude = 0; // y line
+    private Integer longitude = 0; // x line
 
-    CardinalDirection direction = CardinalDirection.NORTH;
+    private CardinalDirection direction = CardinalDirection.NORTH;
 
     public Probe() {}
 
@@ -44,9 +44,9 @@ public class Probe {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append(this.latitude);
-        sb.append(" ");
         sb.append(this.longitude);
+        sb.append(" ");
+        sb.append(this.latitude);
         sb.append(" ");
         sb.append(this.direction);
         return sb.toString();
