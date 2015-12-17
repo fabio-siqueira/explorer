@@ -5,8 +5,8 @@ package br.com.company.explorer.domain;
  */
 public class Probe {
 
-    private Integer latitude = 0; // y line
-    private Integer longitude = 0; // x line
+    private Integer latitude = 0;
+    private Integer longitude = 0;
 
     private CardinalDirection direction = CardinalDirection.NORTH;
 
