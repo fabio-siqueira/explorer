@@ -5,6 +5,8 @@
 *Db.script
 .settings
 .classpath
+*.cmd
+mvnw
 .project
 stacktrace.log
 /*.zip
@@ -23,6 +25,7 @@ stacktrace.log
 /.mvn
 /.slcache/
 /wrapper/
+
 
 # Except this file
 !.gitignore
