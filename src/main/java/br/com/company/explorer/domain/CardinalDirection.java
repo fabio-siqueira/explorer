@@ -9,7 +9,7 @@ public enum CardinalDirection {
     SOUTH("S"),
     WEST("W");
 
-    String id;
+    private String id;
 
     private CardinalDirection(String id) {
         this.id = id;
