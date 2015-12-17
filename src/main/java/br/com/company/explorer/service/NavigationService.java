@@ -18,18 +18,23 @@ public class NavigationService {
     public String move(Integer currentLatitude, Integer currentLongitude, String currentDirection,
                        Integer maxLat, Integer maxLng, List<String> commands) throws InvalidParametersException {
 
-        Probe probe = new Probe();
-        probe.setLongitude(currentLongitude);
-        probe.setLatitude(currentLatitude);
 
-        probe.setDirection(CardinalDirection.valueOf(currentDirection));
+        CardinalDirection direction = CardinalDirection.getById(currentDirection.toUpperCase());
+        if (direction == null) {
+            throw new InvalidParametersException("Parameter currentDirection '" + currentDirection + "' is not allowed.");
+        }
 
-        for (int i = 0; i < commands.size() - 1; i++) {
+        Probe probe = new Probe(currentLatitude, currentLongitude, direction);
 
-            String command = commands.get(i).toUpperCase();
+        System.out.println("");
+        System.out.println(probe);
+
+        for(String command : commands) {
+
+            System.out.println(command);
 
             if (!ACCEPTED_COMMANDS.contains(command)) {
-                throw new InvalidParametersException("Parameter '" + commands.get(i) + "' is not allowed.");
+                throw new InvalidParametersException("Parameter '" + commands + "' is not allowed.");
             }
 
             switch (command) {
@@ -45,9 +50,10 @@ public class NavigationService {
                     goAhead(probe, maxLat, maxLng);
 
             }
+            System.out.println(probe);
         }
 
-        return probe.getPosition();
+        return probe.toString();
     }
 
     public void goAhead(Probe probe, Integer maxLat, Integer maxLng) {
@@ -84,18 +90,18 @@ public class NavigationService {
         switch (probe.getDirection()) {
 
             case NORTH:
-                probe.setDirection(CardinalDirection.EAST);
-                break;
-
-            case EAST:
-                probe.setDirection(CardinalDirection.SOUTH);
-                break;
-
-            case SOUTH:
                 probe.setDirection(CardinalDirection.WEST);
                 break;
 
             case WEST:
+                probe.setDirection(CardinalDirection.SOUTH);
+                break;
+
+            case SOUTH:
+                probe.setDirection(CardinalDirection.EAST);
+                break;
+
+            case EAST:
                 probe.setDirection(CardinalDirection.NORTH);
 
         }
@@ -106,19 +112,19 @@ public class NavigationService {
         switch (probe.getDirection()) {
 
             case NORTH:
-                probe.setDirection(CardinalDirection.WEST);
-                break;
-
-            case EAST:
-                probe.setDirection(CardinalDirection.NORTH);
-                break;
-
-            case SOUTH:
                 probe.setDirection(CardinalDirection.EAST);
                 break;
 
-            case WEST:
+            case EAST:
                 probe.setDirection(CardinalDirection.SOUTH);
+                break;
+
+            case SOUTH:
+                probe.setDirection(CardinalDirection.WEST);
+                break;
+
+            case WEST:
+                probe.setDirection(CardinalDirection.NORTH);
 
         }
     }

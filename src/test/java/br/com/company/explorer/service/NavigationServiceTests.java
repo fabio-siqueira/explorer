@@ -22,7 +22,7 @@ import java.util.List;
 public class NavigationServiceTests {
 
     @Test
-    public void move() {
+    public void firstCase() {
 
         Integer maxLongitude = 5;
         Integer maxLatitude = 5;
@@ -38,7 +38,7 @@ public class NavigationServiceTests {
         String result = "";
 
         try {
-            result = service.move(currentLatitude, currentLongitude, maxLatitude, maxLongitude, commands);
+            result = service.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
 
         } catch (InvalidParametersException e) {
             assert e == null;
@@ -46,6 +46,88 @@ public class NavigationServiceTests {
 
         assert result == "1 3 N";
     }
+
+    @Test
+    public void SecondCase() {
+
+        Integer maxLongitude = 5;
+        Integer maxLatitude = 5;
+
+        Integer currentLatitude = 3;
+        Integer currentLongitude = 3;
+
+        String currentDirection = "E";
+
+        List<String> commands = Arrays.asList("M", "M", "R", "M", "M", "R", "M", "R", "R", "M");
+
+        NavigationService service = new NavigationService();
+        String result = "";
+
+        try {
+            result = service.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
+
+        } catch (InvalidParametersException e) {
+            assert e == null;
+        }
+
+        assert result == "5 1 E";
+    }
+
+
+    @Test
+    public void goAhead() {
+        NavigationService service = new NavigationService();
+        Probe probe = new Probe();
+
+        Integer maxLongitude = 5;
+        Integer maxLatitude = 5;
+
+
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        assert probe.getLatitude() == 1;
+
+
+        probe.setDirection(CardinalDirection.EAST);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        assert probe.getLongitude() == 1;
+
+
+
+        probe.setDirection(CardinalDirection.SOUTH);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        assert probe.getLatitude() == 0;
+
+
+        probe.setDirection(CardinalDirection.WEST);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        assert probe.getLatitude() == 0;
+
+
+        probe.setDirection(CardinalDirection.NORTH);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+
+        assert probe.getLatitude() == maxLatitude;
+
+
+
+        probe.setDirection(CardinalDirection.EAST);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+        service.goAhead(probe, maxLatitude, maxLongitude);
+
+        assert probe.getLongitude() == maxLatitude;
+
+    }
+
+
 
     @Test
     public void turnLeft() {
@@ -63,6 +145,9 @@ public class NavigationServiceTests {
 
         service.turnLeft(probe);
         assert probe.getDirection() == CardinalDirection.NORTH;
+
+        service.turnLeft(probe);
+        assert probe.getDirection() == CardinalDirection.WEST;
 
     }
 
@@ -82,6 +167,9 @@ public class NavigationServiceTests {
 
         service.turnRight(probe);
         assert probe.getDirection() == CardinalDirection.NORTH;
+
+        service.turnRight(probe);
+        assert probe.getDirection() == CardinalDirection.EAST;
 
     }
 }

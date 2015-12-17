@@ -10,6 +10,14 @@ public class Probe {
 
     CardinalDirection direction = CardinalDirection.NORTH;
 
+    public Probe() {}
+
+    public Probe(Integer latitude, Integer longitude, CardinalDirection direction) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.direction = direction;
+    }
+
     public Integer getLatitude() {
         return latitude;
     }
@@ -34,7 +42,7 @@ public class Probe {
         this.direction = direction;
     }
 
-    public String getPosition() {
+    public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(this.latitude);
         sb.append(" ");
