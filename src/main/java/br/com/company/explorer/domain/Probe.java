@@ -44,9 +44,9 @@ public class Probe {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append(this.longitude);
-        sb.append(" ");
         sb.append(this.latitude);
+        sb.append(" ");
+        sb.append(this.longitude);
         sb.append(" ");
         sb.append(this.direction);
         return sb.toString();

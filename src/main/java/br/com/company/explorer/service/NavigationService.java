@@ -3,6 +3,7 @@ package br.com.company.explorer.service;
 import br.com.company.explorer.domain.CardinalDirection;
 import br.com.company.explorer.domain.Probe;
 import br.com.company.explorer.exception.InvalidParametersException;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,21 +11,16 @@ import java.util.List;
 /**
  * Created by Fábio Siqueira on 12/17/15.
  */
+@Component
 public class NavigationService {
 
     public static final List<String> ACCEPTED_COMMANDS = Arrays.asList("R", "L", "M");
 
 
-    public String move(Integer currentLatitude, Integer currentLongitude, String currentDirection,
+    public String move(Integer currentLatitude, Integer currentLongitude, CardinalDirection currentDirection,
                        Integer maxLat, Integer maxLng, List<String> commands) throws InvalidParametersException {
 
-
-        CardinalDirection direction = CardinalDirection.getById(currentDirection.toUpperCase());
-        if (direction == null) {
-            throw new InvalidParametersException("Parameter currentDirection '" + currentDirection + "' is not allowed.");
-        }
-
-        Probe probe = new Probe(currentLatitude, currentLongitude, direction);
+        Probe probe = new Probe(currentLatitude, currentLongitude, currentDirection);
 
         for(String command : commands) {
 
@@ -55,26 +51,26 @@ public class NavigationService {
         switch (probe.getDirection()) {
 
             case NORTH:
-                if (probe.getLatitude() + 1 <= maxLat) {
-                    probe.setLatitude(probe.getLatitude() + 1);
-                }
-                break;
-
-            case EAST:
                 if (probe.getLongitude() + 1 <= maxLng) {
                     probe.setLongitude(probe.getLongitude() + 1);
                 }
                 break;
 
+            case EAST:
+                if (probe.getLatitude() + 1 <= maxLat) {
+                    probe.setLatitude(probe.getLatitude() + 1);
+                }
+                break;
+
             case SOUTH:
-                if (probe.getLatitude() - 1 >= 0) {
-                    probe.setLatitude(probe.getLatitude() - 1);
+                if (probe.getLongitude() - 1 >= 0) {
+                    probe.setLongitude(probe.getLongitude() - 1);
                 }
                 break;
 
             case WEST:
-                if (probe.getLongitude() - 1 >= 0) {
-                    probe.setLongitude(probe.getLongitude() - 1);
+                if (probe.getLatitude() - 1 >= 0) {
+                    probe.setLatitude(probe.getLatitude() - 1);
                 }
         }
     }
