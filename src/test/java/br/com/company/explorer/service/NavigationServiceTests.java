@@ -18,8 +18,6 @@ import static org.junit.Assert.*;
 /**
  * Created by Fábio Siqueira on 12/17/15.
  */
-
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(ExplorerApplication.class)
 public class NavigationServiceTests {
@@ -33,17 +31,14 @@ public class NavigationServiceTests {
         Integer maxLongitude = 5;
         Integer maxLatitude = 5;
 
-        Integer currentLatitude = 1;
-        Integer currentLongitude = 2;
-
-        CardinalDirection currentDirection = CardinalDirection.NORTH;
+        Probe probe = new Probe(1, 2, CardinalDirection.NORTH);
 
         List<String> commands = Arrays.asList("L", "M", "L", "M", "L", "M", "L", "M", "M");
 
         String result = "";
 
         try {
-            result = navigationService.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
+            result = navigationService.move(probe, maxLatitude, maxLongitude, commands);
 
         } catch (InvalidParametersException e) {
             assertNull(e);
@@ -57,17 +52,14 @@ public class NavigationServiceTests {
         Integer maxLongitude = 5;
         Integer maxLatitude = 5;
 
-        Integer currentLatitude = 3;
-        Integer currentLongitude = 3;
-
-        CardinalDirection currentDirection = CardinalDirection.EAST;
+        Probe probe = new Probe(3, 3, CardinalDirection.EAST);
 
         List<String> commands = Arrays.asList("M", "M", "R", "M", "M", "R", "M", "R", "R", "M");
 
         String result = "";
 
         try {
-            result = navigationService.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
+            result = navigationService.move(probe, maxLatitude, maxLongitude, commands);
 
         } catch (InvalidParametersException e) {
             assertNull(e);
@@ -76,20 +68,19 @@ public class NavigationServiceTests {
     }
 
     @Test(expected=InvalidParametersException.class)
-    public void mustNotMove() throws InvalidParametersException{
+    public void mustNotMoveWithInvalidCommands() throws InvalidParametersException{
 
         Integer maxLongitude = 5;
         Integer maxLatitude = 5;
 
-        Integer currentLatitude = 3;
-        Integer currentLongitude = 3;
+        Probe probe = new Probe(5, 5, CardinalDirection.EAST);
 
-        CardinalDirection currentDirection = CardinalDirection.EAST;
+        List<String> commands = Arrays.asList("B");
 
-        List<String> commands = Arrays.asList("B", "M", "M", "R", "M", "M", "R", "M", "R", "R", "M");
+        navigationService.move(probe, maxLatitude, maxLongitude, commands);
 
-        navigationService.move(currentLatitude, currentLongitude, currentDirection, maxLatitude, maxLongitude, commands);
     }
+
 
     @Test
     public void goAhead() {

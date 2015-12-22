@@ -3,6 +3,7 @@ package br.com.company.explorer.service;
 import br.com.company.explorer.domain.CardinalDirection;
 import br.com.company.explorer.domain.Probe;
 import br.com.company.explorer.exception.InvalidParametersException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -16,11 +17,19 @@ public class NavigationService {
 
     public static final List<String> ACCEPTED_COMMANDS = Arrays.asList("R", "L", "M");
 
+    @Autowired
+    ProbeRepository probeRepository;
 
-    public String move(Integer currentLatitude, Integer currentLongitude, CardinalDirection currentDirection,
-                       Integer maxLat, Integer maxLng, List<String> commands) throws InvalidParametersException {
+    public List<Probe> list() {
+        return probeRepository.findAll();
+    }
 
-        Probe probe = new Probe(currentLatitude, currentLongitude, currentDirection);
+    public Probe arrive(Integer latitude, Integer longitude, CardinalDirection direction) {
+        Probe probe = new Probe(latitude, longitude, direction);
+        return probeRepository.save(probe);
+    }
+
+    public String move(Probe probe, Integer maxLat, Integer maxLng, List<String> commands) throws InvalidParametersException {
 
         for(String command : commands) {
 
