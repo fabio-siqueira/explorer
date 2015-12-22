@@ -17,18 +17,6 @@ public class NavigationService {
 
     public static final List<String> ACCEPTED_COMMANDS = Arrays.asList("R", "L", "M");
 
-    @Autowired
-    ProbeRepository probeRepository;
-
-    public List<Probe> list() {
-        return probeRepository.findAll();
-    }
-
-    public Probe arrive(Integer latitude, Integer longitude, CardinalDirection direction) {
-        Probe probe = new Probe(latitude, longitude, direction);
-        return probeRepository.save(probe);
-    }
-
     public String move(Probe probe, Integer maxLat, Integer maxLng, List<String> commands) throws InvalidParametersException {
 
         for(String command : commands) {
