@@ -1,26 +1,31 @@
 package br.com.company.explorer.web;
 
-import br.com.company.explorer.domain.CardinalDirection;
+import br.com.company.explorer.domain.Land;
+import br.com.company.explorer.domain.LandRepository;
 import br.com.company.explorer.domain.Probe;
-import br.com.company.explorer.exception.InvalidParametersException;
+import br.com.company.explorer.domain.ProbeRepository;
+import br.com.company.explorer.exception.LandNotFoundException;
+import br.com.company.explorer.exception.ProbeNotFoundException;
 import br.com.company.explorer.service.NavigationService;
-import br.com.company.explorer.service.ProbeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * Created by Fábio Siqueira on 12/18/15.
  */
 @RestController
-@RequestMapping(value = "/probes")
+@RequestMapping(value = "lands/{landId}/probes", produces="application/json;charset=UTF-8")
 public class ProbeController {
 
     @Autowired
@@ -29,36 +34,109 @@ public class ProbeController {
     @Autowired
     ProbeRepository probeRepository;
 
+    @Autowired
+    LandRepository landRepository;
+
     @RequestMapping(method=GET)
-    public List<Probe> index() {
-        return probeRepository.findAll();
-    }
-
-    @RequestMapping(method=POST)
-    public Probe save(@RequestBody Probe input) {
-        return probeRepository.save(input);
-    }
-
-    @RequestMapping(value = "/{id}", method=GET)
-    public Probe show(@PathVariable Long id) {
-        return probeRepository.getOne(id);
-    }
-
-    @RequestMapping(value = "/{id}", method=PUT)
-    public Probe update(@PathVariable Long id) {
-        List<String> commands = Arrays.asList("L", "M", "L", "M", "L", "M", "L", "M", "M");
-        Probe probe = probeRepository.getOne(id);
-        try {
-            navigationService.move(probe, 5, 5, commands);
-            probeRepository.save(probe);
-        } catch (InvalidParametersException e) {
-            e.printStackTrace();
+    public Set<Probe> index(@PathVariable Long landId) {
+        Land land = landRepository.findOne(landId);
+        if (land == null) {
+            throw new LandNotFoundException(landId);
         }
-        return probe;
+        return landRepository.findOne(landId).getProbes();
     }
 
-    @RequestMapping(value = "/{id}", method=DELETE)
-    public Probe delete(@PathVariable Long id) {
-        return new Probe();
+    @RequestMapping(method=POST, consumes="application/json;charset=UTF-8")
+    public ResponseEntity<?> save(@PathVariable Long landId, @RequestBody Probe input) {
+        Land land = landRepository.findOne(landId);
+        input.setLand(land);
+        Probe probe = probeRepository.save(input);
+        return new ResponseEntity(probe, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(path = "/{id}", method=GET)
+    public Probe show(@PathVariable Long landId, @PathVariable Long id) {
+        Land land = landRepository.findOne(landId);
+        if (land == null) {
+            throw new LandNotFoundException(landId);
+        }
+        Probe probe = land.getProbeById(id);
+        if (probe == null) {
+            throw new ProbeNotFoundException(id);
+        }
+        return land.getProbeById(id);
+    }
+
+    @RequestMapping(path = "/{id}", method=PUT, consumes="application/json;charset=UTF-8")
+    public ResponseEntity<?> update(@PathVariable Long landId, @PathVariable Long id, @RequestBody Probe update) {
+        Land land = landRepository.findOne(landId);
+        if (land == null) {
+            throw new LandNotFoundException(landId);
+        }
+        Probe probe = land.getProbeById(id);
+        if (probe == null) {
+            throw new ProbeNotFoundException(id);
+        }
+
+        probe.setLatitude(update.getLatitude());
+        probe.setLongitude(update.getLongitude());
+        probe.setDirection(update.getDirection());
+
+        probeRepository.save(probe);
+
+        return new ResponseEntity(probe, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/{id}", method=DELETE)
+    public ResponseEntity<?> delete(@PathVariable Long landId, @PathVariable Long id) {
+        Land land = landRepository.findOne(landId);
+        if (land == null) {
+            throw new LandNotFoundException(landId);
+        }
+        Probe probe = land.getProbeById(id);
+        if (probe == null) {
+            throw new ProbeNotFoundException(id);
+        }
+        probeRepository.delete(probe.getId());
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(path = "/{id}/move", method=POST, consumes="application/json;charset=UTF-8")
+    public ResponseEntity<?> move(@PathVariable Long landId, @PathVariable Long id, @RequestBody RequestWrapper wrapper) {
+        Land land = landRepository.findOne(landId);
+        if (land == null) {
+            throw new LandNotFoundException(landId);
+        }
+        Probe probe = land.getProbeById(id);
+        if (probe == null) {
+            throw new ProbeNotFoundException(id);
+        }
+
+        navigationService.move(probe, wrapper.getCommands());
+        probeRepository.save(probe);
+
+        return new ResponseEntity(probe, HttpStatus.OK);
+    }
+
+}
+
+class RequestWrapper implements Serializable {
+    private List<String> commands;
+
+    public RequestWrapper() {
+        super();
+    }
+
+    public RequestWrapper(List<String> commands) {
+        this.commands = commands;
+    }
+
+    public List<String> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
     }
 }
+
