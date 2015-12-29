@@ -17,7 +17,7 @@ import static org.junit.Assert.assertSame;
 @SpringApplicationConfiguration(ExplorerApplication.class)
 public class ProbeTests {
 
-    Land land;
+    private Land land;
 
     @Before
     public void setup() throws Exception {

@@ -4,6 +4,7 @@ import br.com.company.explorer.ExplorerApplication;
 import br.com.company.explorer.domain.Land;
 import br.com.company.explorer.domain.Probe;
 import br.com.company.explorer.exception.InvalidParametersException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,17 @@ public class NavigationServiceTests {
     @Autowired
     private NavigationService navigationService;
 
+    private Land land;
+
+    @Before
+    public void setup() throws Exception {
+        land = new Land(5, 5);
+    }
+
     @Test
     public void firstCase() {
 
-        Probe probe = new Probe(1, 2, NORTH, new Land(5, 5));
+        Probe probe = new Probe(1, 2, NORTH, land);
 
         List<String> commands = Arrays.asList("L", "M", "L", "M", "L", "M", "L", "M", "M");
 
@@ -47,7 +55,7 @@ public class NavigationServiceTests {
     @Test
     public void secondCase() {
 
-        Probe probe = new Probe(3, 3, EAST, new Land(5, 5));
+        Probe probe = new Probe(3, 3, EAST, land);
 
         List<String> commands = Arrays.asList("M", "M", "R", "M", "M", "R", "M", "R", "R", "M");
 
@@ -65,7 +73,7 @@ public class NavigationServiceTests {
     @Test(expected=InvalidParametersException.class)
     public void mustNotMoveWithInvalidCommands() throws InvalidParametersException{
 
-        Probe probe = new Probe(5, 5, EAST, new Land(5, 5));
+        Probe probe = new Probe(5, 5, EAST, land);
 
         List<String> commands = Arrays.asList("B");
         navigationService.move(probe, commands);
