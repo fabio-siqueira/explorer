@@ -46,6 +46,79 @@ public class Probe implements Serializable {
         this.land = land;
     }
 
+    public void goAhead() {
+
+        switch (this.getDirection()) {
+
+            case NORTH:
+                if (this.longitude + 1 <= this.land.getTopLimit()) {
+                    this.longitude += 1;
+                }
+                break;
+
+            case EAST:
+                if (this.latitude + 1 <= this.land.getRightLimit()) {
+                    this.latitude += 1;
+                }
+                break;
+
+            case SOUTH:
+                if (this.longitude - 1 >= Land.ZERO) {
+                    this.longitude -= 1;
+                }
+                break;
+
+            case WEST:
+                if (this.latitude - 1 >= Land.ZERO) {
+                    this.latitude -= 1;
+                }
+        }
+    }
+
+    public void turnLeft() {
+
+        switch (this.getDirection()) {
+
+            case NORTH:
+                this.direction = CardinalDirection.WEST;
+                break;
+
+            case WEST:
+                this.direction = CardinalDirection.SOUTH;
+                break;
+
+            case SOUTH:
+                this.direction = CardinalDirection.EAST;
+                break;
+
+            case EAST:
+                this.direction = CardinalDirection.NORTH;
+
+        }
+    }
+
+    public void turnRight() {
+
+        switch (this.direction) {
+
+            case NORTH:
+                this.direction = CardinalDirection.EAST;
+                break;
+
+            case EAST:
+                this.direction = CardinalDirection.SOUTH;
+                break;
+
+            case SOUTH:
+                this.direction = CardinalDirection.WEST;
+                break;
+
+            case WEST:
+                this.direction = CardinalDirection.NORTH;
+
+        }
+    }
+
     public Long getId() {
         return id;
     }
